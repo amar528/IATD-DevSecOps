@@ -47,7 +47,8 @@ class User(db.Model):
             if vuln:
                 payload = jwt.decode(auth_token, vuln_app.app.config.get('SECRET_KEY'),
                                      algorithms=["HS256","none"],
-                                     options={"verify_signature": False})
+                                     options={"verify_signature": False},
+                                     verify=False)
             else:
                 payload = jwt.decode(auth_token, vuln_app.app.config.get('SECRET_KEY'), algorithms=["HS256"])
             return payload['sub']
