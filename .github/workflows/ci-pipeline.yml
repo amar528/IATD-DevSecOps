@@ -44,7 +44,7 @@ jobs:
 
       - name: Download SonarQube report
         run: |
-          sleep 30
+          sleep 60
           URL="${{ secrets.SONAR_URL }}/api/qualitygates/project_status?p=1&projectKey=devsecops-app&branch=main"
           echo "Report URL $URL"
           curl --header 'Authorization: Bearer ${{ secrets.SONAR_TOKEN }}' "$URL" -o sonarqube-report.json
