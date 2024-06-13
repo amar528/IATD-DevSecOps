@@ -186,8 +186,8 @@ jobs:
           AZURE_ACCESS_TOKEN: ${{ steps.token-gen.outputs.azureAccessToken }}
         run: |
           
-          WEEK3_CONTAINER=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" -d "$DOCKERHUB_USERNAME/devsecops-labs" https://devsecops-ver.azurewebsites.net/api/week3-container)
-          echo "Week3 container upload: $WEEK3_CONTAINER"
+          WEEK1_CONTAINER=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" -d "$DOCKERHUB_USERNAME/devsecops-labs" https://devsecops-ver.azurewebsites.net/api/week1-container)
+          echo "Week1 container upload: $WEEK1_CONTAINER"
           
           SONAR_RESPONSE=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  --data-binary @$GITHUB_WORKSPACE/sonarqube-report.json https://devsecops-ver.azurewebsites.net/api/week3-sonar-report)
           echo "Sonar upload: $SONAR_RESPONSE"
