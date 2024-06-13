@@ -53,7 +53,7 @@ jobs:
           sleep 30
           URL="${{ secrets.SONAR_URL }}/api/qualitygates/project_status?p=1&projectKey=devsecops-app&branch=main"
           echo "Report URL $URL"
-          curl -v --header 'Authorization: Bearer ${{ secrets.SONAR_TOKEN }}' "$URL" -o sonarqube-report.json
+          curl -v --cookie '${{ secrets.SONAR_COOKIE }}' "$URL" -o sonarqube-report.json
 
       - name: Upload SonarQube report
         id: artifact-sonarqube
