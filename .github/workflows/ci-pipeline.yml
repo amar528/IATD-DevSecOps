@@ -25,7 +25,7 @@ jobs:
           pytest api_tests.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@master
         id: artifact-upload-step
         with:
           name: test-results
@@ -59,7 +59,7 @@ jobs:
 
       - name: Upload SonarQube report
         id: artifact-sonarqube
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@master
         with:
           name: sonarqube-report
           path: sonarqube-report.json
@@ -124,7 +124,7 @@ jobs:
 
       - name: Upload ZAP report
         id: artifact-zap
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@master
         with:
           name: zap-report
           path: report_json.json
@@ -169,11 +169,13 @@ jobs:
           inlineScript: |
             ACCESS_TOKEN=$(az account get-access-token | jq -r .accessToken)
             echo "azureAccessToken=$ACCESS_TOKEN" >> "$GITHUB_OUTPUT"
-      - uses: actions/download-artifact@v4
+
+      - uses: actions/download-artifact@master
         with:
           name: sonarqube-report
           path: ${{github.workspace}}
-      - uses: actions/download-artifact@v4
+
+      - uses: actions/download-artifact@master
         with:
           name: zap-report
           path: ${{github.workspace}}
@@ -183,7 +185,6 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           AZURE_ACCESS_TOKEN: ${{ steps.token-gen.outputs.azureAccessToken }}
         run: |
-          sleep 45
           
           WEEK1_CONTAINER=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" -d "$DOCKERHUB_USERNAME/devops-labs" https://devsecops-ver.azurewebsites.net/api/week1-container)
           echo "Week1 container upload: $WEEK1_CONTAINER"
