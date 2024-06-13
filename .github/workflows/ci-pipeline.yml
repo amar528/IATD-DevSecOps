@@ -169,11 +169,6 @@ jobs:
             echo "azureAccessToken=$ACCESS_TOKEN" >> "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
         with:
-          name: sonarqube-report
-          path: ${{github.workspace}}
-      - uses: actions/download-artifact@v4
-        with:
-          name: zap-report
           path: ${{github.workspace}}
 
       - name: Upload reports
