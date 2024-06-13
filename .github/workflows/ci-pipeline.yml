@@ -53,7 +53,7 @@ jobs:
           sleep 30
           URL="${{ secrets.SONAR_URL }}/api/qualitygates/project_status?p=1&projectKey=devsecops-app&branch=main"
           echo "Report URL $URL"
-          curl --header 'Authorization: Bearer ${{ secrets.SONAR_TOKEN }}' "$URL" -o sonarqube-report.json
+          curl -v --header 'Authorization: Bearer ${{ secrets.SONAR_TOKEN }}' "$URL" -o sonarqube-report.json
 
       - name: Upload SonarQube report
         id: artifact-sonarqube
@@ -105,7 +105,7 @@ jobs:
           export FQDN=$(az containerapp show -n devops-test-app -g devsecops-lab --query properties.configuration.ingress.fqdn -o tsv)
           echo "TEST_APP_URL=https://$FQDN" >> $GITHUB_ENV
           echo "TEST_APP_URL=https://$FQDN" 
-          curl https://$FQDN/ui
+          curl -v https://$FQDN/ui
           sed -i "s,http://localhost:5000,https://$FQDN,g" $GITHUB_WORKSPACE/openapi_specs/openapi3.yml
 
       - name: ZAP Scan
@@ -181,10 +181,10 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           AZURE_ACCESS_TOKEN: ${{ steps.token-gen.outputs.azureAccessToken }}
         run: |
-          WEEK1_CONTAINER=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" -d "$DOCKERHUB_USERNAME/devops-labs" https://devsecops-ver.azurewebsites.net/api/week1-container)
+          WEEK1_CONTAINER=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" -d "$DOCKERHUB_USERNAME/devops-labs" https://devsecops-ver.azurewebsites.net/api/week1-container)
           echo "Week1 container upload: $WEEK1_CONTAINER"
           
-          SONAR_RESPONSE=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  --data-binary @$GITHUB_WORKSPACE/sonarqube-report.json https://devsecops-ver.azurewebsites.net/api/week3-sonar-report)
+          SONAR_RESPONSE=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  --data-binary @$GITHUB_WORKSPACE/sonarqube-report.json https://devsecops-ver.azurewebsites.net/api/week3-sonar-report)
           echo "Sonar upload: $SONAR_RESPONSE"
-          ZAP_RESPONSE=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  --data-binary @$GITHUB_WORKSPACE/report_json.json https://devsecops-ver.azurewebsites.net/api/week3-zap-report)
+          ZAP_RESPONSE=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  --data-binary @$GITHUB_WORKSPACE/report_json.json https://devsecops-ver.azurewebsites.net/api/week3-zap-report)
           echo "Zap upload: $ZAP_RESPONSE"
