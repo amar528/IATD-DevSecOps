@@ -64,7 +64,7 @@ jobs:
 
 
   dast:
-    needs: [ test, sonarqube ]
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -129,7 +129,7 @@ jobs:
 
 
   build:
-    needs: test
+    needs: [ sonarqube, dast ]
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -151,7 +151,7 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-lab:latest
 
   submit_results:
-    needs: [ build, sonarqube, dast ]
+    needs: build
     if: true
     runs-on: ubuntu-latest
     steps:
