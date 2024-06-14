@@ -53,9 +53,7 @@ jobs:
           sleep 30
           URL="${{ secrets.SONAR_URL }}/api/qualitygates/project_status?p=1&projectKey=devsecops-app&branch=main"
           echo "Report URL $URL"
-          # This uses a JWT cookie.  Using Bearer token did not work in any configuration, project, global, user token
-          # The Bearer token is valid as it generates the sonar report, but it does not work for webapi calls
-          curl -v --cookie '${{ secrets.SONAR_COOKIE }}' "$URL" -o sonarqube-report.json
+          curl -v -u '${{ secrets.SONAR_TOKEN }}:' "$URL" -o sonarqube-report.json
 
       - name: Upload SonarQube report
         id: artifact-sonarqube
