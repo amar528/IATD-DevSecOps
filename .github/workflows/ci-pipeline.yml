@@ -127,26 +127,6 @@ jobs:
           name: zap-report
           path: report_json.json
 
-  image-scan:
-    needs: [ test ]
-    if: true
-    runs-on: ubuntu-latest
-    steps:
-      - name: Scan image
-        uses: anchore/scan-action@v3
-        id: image-scan
-        with:
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-lab:latest
-          fail-build: false
-          output-format: json
-      - name: Upload Image report
-        id: upload-image-report
-        uses: actions/upload-artifact@master
-        with:
-          name: image-report
-          path: ${{ steps.image-scan.outputs.json }}
-
-
   build:
     needs: [ sonarqube, dast ]
     runs-on: ubuntu-latest
@@ -169,8 +149,27 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-lab:latest
 
+  image-scan:
+    needs: [ build ]
+    if: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Scan image
+        uses: anchore/scan-action@v3
+        id: image-scan
+        with:
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-lab:latest
+          fail-build: false
+          output-format: json
+      - name: Upload Image report
+        id: upload-image-report
+        uses: actions/upload-artifact@master
+        with:
+          name: image-report
+          path: ${{ steps.image-scan.outputs.json }}
+
   submit_results:
-    needs: build
+    needs: image-scan
     if: true
     runs-on: ubuntu-latest
     steps:
