@@ -136,7 +136,7 @@ jobs:
         uses: anchore/scan-action@v3
         id: image-scan
         with:
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-labs:latest
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-lab:latest
           fail-build: false
           output-format: json
       - name: Upload Image report
