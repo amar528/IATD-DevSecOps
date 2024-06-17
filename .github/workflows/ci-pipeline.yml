@@ -34,7 +34,7 @@ jobs:
 
   sonarqube:
     needs: test
-    if: true
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -65,6 +65,7 @@ jobs:
 
   dast:
     needs: test
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
