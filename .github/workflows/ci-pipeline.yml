@@ -129,7 +129,7 @@ jobs:
           path: report_json.json
 
   build:
-    needs: [ sonarqube, dast ]
+    needs: [ test ]
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
