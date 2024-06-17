@@ -34,7 +34,6 @@ jobs:
 
   sonarqube:
     needs: test
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -65,7 +64,6 @@ jobs:
 
   dast:
     needs: test
-    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -129,7 +127,7 @@ jobs:
           path: report_json.json
 
   build:
-    needs: [ test ]
+    needs: [ sonarqube, dast ]
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -170,7 +168,7 @@ jobs:
           path: ${{ steps.image-scan.outputs.json }}
 
   submit_results:
-    needs: image-scan
+    needs: [ sonarqube, dast, build, image-scan ]
     if: true
     runs-on: ubuntu-latest
     steps:
@@ -210,6 +208,12 @@ jobs:
           
           WEEK1_CONTAINER=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" -d "$DOCKERHUB_USERNAME/devsecops-lab" https://devsecops-ver.azurewebsites.net/api/week1-container)
           echo "Week1 container upload: $WEEK1_CONTAINER"
+          
+          SONAR_RESPONSE=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  --data-binary @$GITHUB_WORKSPACE/sonarqube-report.json https://devsecops-ver.azurewebsites.net/api/week3-sonar-report)
+          echo "Sonar upload: $SONAR_RESPONSE"
+          
+          ZAP_RESPONSE=$(curl -v -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  --data-binary @$GITHUB_WORKSPACE/report_json.json https://devsecops-ver.azurewebsites.net/api/week3-zap-report)
+          echo "Zap upload: $ZAP_RESPONSE"
           
           IMAGE_RESPONSE=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" --data-binary @$GITHUB_WORKSPACE/results.json https://devsecops-ver.azurewebsites.net/api/week4-image-report)
           echo "Image report upload: $IMAGE_RESPONSE"
