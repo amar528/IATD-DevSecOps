@@ -148,7 +148,7 @@ jobs:
           sbom: true
           provenance: true
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-labs:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-lab:latest
 
   image-scan:
     needs: [ build ]
