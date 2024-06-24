@@ -128,6 +128,8 @@ jobs:
 
   build:
     needs: [ sonarqube, dast ]
+    permissions:
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -142,13 +144,22 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
-      - name: Build and push
+      - name: Build and push, with SBOM and provenance
         uses: docker/build-push-action@v5
         with:
+          push: true
           sbom: true
           provenance: true
-          push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-lab:latest
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.4.0
+
+      - name: Sign the images with GitHub OIDC Token
+        env:
+          IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-lab:latest
+        run: |
+          cosign sign --yes ${IMAGE}
 
   image-scan:
     needs: [ build ]
