@@ -189,6 +189,12 @@ jobs:
     needs: [ sonarqube, dast, image-scan ]
     runs-on: ubuntu-latest
     steps:
+      - name: Upload Threat Model
+        id: upload-threat-model
+        uses: actions/upload-artifact@master
+        with:
+          name: ci-pipeline.json
+          path: ${{ github.workspace }}/threat-model/ci-pipeline.json
       - name: Download sonarqube-report
         uses: actions/download-artifact@master
         with:
@@ -265,6 +271,11 @@ jobs:
           name: image-report
           path: ${{github.workspace}}
 
+      - uses: actions/download-artifact@master
+        with:
+          name: ci-pipeline.json
+          path: ${{github.workspace}}
+
       - name: Upload reports
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -287,5 +298,5 @@ jobs:
           WEEK5_RESPONSE=$(curl -X POST  -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  -d "$IMAGE" https://devsecops-ver.azurewebsites.net/api/week5-report)
           echo "Week5 report upload: $WEEK5_RESPONSE"
           
-          MODEL_RESPONSE=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" --data-binary @${{github.workspace}}/threat-model/ci-pipeline.json https://devsecops-ver.azurewebsites.net/api/week6-report)
+          MODEL_RESPONSE=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" --data-binary @$GITHUB_WORKSPACE/ci-pipeline.json https://devsecops-ver.azurewebsites.net/api/week6-report)
           echo "Model report upload: $MODEL_RESPONSE"
