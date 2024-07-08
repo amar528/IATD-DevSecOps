@@ -269,11 +269,6 @@ jobs:
           name: image-report
           path: ${{github.workspace}}
 
-      - uses: actions/download-artifact@master
-        with:
-          name: threat-model.json
-          path: ${{github.workspace}}
-
       - name: Upload reports
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
