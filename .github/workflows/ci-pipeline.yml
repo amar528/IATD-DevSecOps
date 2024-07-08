@@ -288,8 +288,6 @@ jobs:
           IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/devsecops-lab
         run: |
           
-          ls -R $GITHUB_WORKSPACE
-          
           WEEK1_CONTAINER=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" -d "$DOCKERHUB_USERNAME/devsecops-lab" https://devsecops-ver.azurewebsites.net/api/week1-container)
           echo "Week1 container upload: $WEEK1_CONTAINER"
           
