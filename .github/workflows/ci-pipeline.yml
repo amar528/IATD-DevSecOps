@@ -193,23 +193,27 @@ jobs:
         id: upload-threat-model
         uses: actions/upload-artifact@master
         with:
-          name: ci-pipeline.json
+          name: threat-model.json
           path: ${{ github.workspace }}/threat-model/ci-pipeline.json
+
       - name: Download sonarqube-report
         uses: actions/download-artifact@master
         with:
           name: sonarqube-report
           path: ${{github.workspace}}
+
       - name: Download zap-report
         uses: actions/download-artifact@master
         with:
           name: zap-report
           path: ${{github.workspace}}
+
       - name: Download image-report
         uses: actions/download-artifact@master
         with:
           name: image-report
           path: ${{github.workspace}}
+
       - name: Read reports
         run: |
           IMAGE_RESULT_HIGH=$(cat results.json | jq '.matches[] | select(.vulnerability.severity=="High") | .vulnerability.id' | wc -l)
@@ -273,7 +277,7 @@ jobs:
 
       - uses: actions/download-artifact@master
         with:
-          name: ci-pipeline.json
+          name: threat-model.json
           path: ${{github.workspace}}
 
       - name: Upload reports
@@ -298,5 +302,5 @@ jobs:
           WEEK5_RESPONSE=$(curl -X POST  -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  -d "$IMAGE" https://devsecops-ver.azurewebsites.net/api/week5-report)
           echo "Week5 report upload: $WEEK5_RESPONSE"
           
-          MODEL_RESPONSE=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" --data-binary @$GITHUB_WORKSPACE/ci-pipeline.json https://devsecops-ver.azurewebsites.net/api/week6-report)
+          MODEL_RESPONSE=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" --data-binary @$GITHUB_WORKSPACE/threat-model.json https://devsecops-ver.azurewebsites.net/api/week6-report)
           echo "Model report upload: $MODEL_RESPONSE"
