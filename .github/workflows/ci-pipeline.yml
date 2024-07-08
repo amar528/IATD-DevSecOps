@@ -12,6 +12,13 @@ jobs:
       - run: |
           ls -R
 
+      - name: Upload threat model
+        uses: actions/upload-artifact@master
+        id: artifact-upload-threat-model
+        with:
+          name: threat-model
+          path: threat-model/ci-pipeline.json
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -269,6 +276,11 @@ jobs:
           name: image-report
           path: ${{github.workspace}}
 
+      - uses: actions/download-artifact@master
+        with:
+          name: threat-model
+          path: ${{github.workspace}}
+
       - name: Upload reports
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -293,5 +305,5 @@ jobs:
           WEEK5_RESPONSE=$(curl -X POST  -H "Authorization: Bearer $AZURE_ACCESS_TOKEN"  -d "$IMAGE" https://devsecops-ver.azurewebsites.net/api/week5-report)
           echo "Week5 report upload: $WEEK5_RESPONSE"
           
-          MODEL_RESPONSE=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" --data-binary @$GITHUB_WORKSPACE/threat-model/ci-pipeline.json https://devsecops-ver.azurewebsites.net/api/week6-report)
+          MODEL_RESPONSE=$(curl -X POST -H "Authorization: Bearer $AZURE_ACCESS_TOKEN" --data-binary @$GITHUB_WORKSPACE/ci-pipeline.json https://devsecops-ver.azurewebsites.net/api/week6-report)
           echo "Model report upload: $MODEL_RESPONSE"
